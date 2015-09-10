@@ -1,0 +1,959 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"ses",
+				"session_data	http2_session_data *"
+			],
+			[
+				"app",
+				"app_ctx	app_context *"
+			],
+			[
+				"ep_file_n",
+				"ep_file_create(struct ep_base *pool, int fd, ep_filecb cb, void *args)	struct ep_file *"
+			],
+			[
+				"sin",
+				"sin_addr	struct in_addr"
+			],
+			[
+				"s_c",
+				"s_channel	int[]"
+			],
+			[
+				"s_ch",
+				"s_channel_file	struct ep_file *"
+			],
+			[
+				"ep_file",
+				"ep_file_free(struct ep_file *ep)	void"
+			],
+			[
+				"dns_",
+				"dns_fini()	int"
+			],
+			[
+				"ep_base",
+				"ep_base_stop(struct ep_base *base)	void"
+			],
+			[
+				"dns",
+				"dns_fini()	int"
+			],
+			[
+				"s_",
+				"s_event	struct ep_file *"
+			],
+			[
+				"s_file",
+				"s_channel_file	struct ep_file *"
+			],
+			[
+				"con",
+				"connected	bool"
+			],
+			[
+				"co",
+				"conn	struct conn *"
+			],
+			[
+				"p",
+				"conn_proto	struct conn_proto *"
+			],
+			[
+				"RELAY_",
+				"RELAY_CONN_ERROR	enum <anonymous>"
+			],
+			[
+				"re",
+				"relay	void *"
+			],
+			[
+				"li",
+				"list_reqs	list_head"
+			],
+			[
+				"s",
+				"status_code	unsigned short"
+			],
+			[
+				"h",
+				"response_header	struct header *"
+			],
+			[
+				"HEADER",
+				"HEADER_RESPONSE	enum <anonymous>"
+			],
+			[
+				"RELAY",
+				"RELAY_MSG_COMPLETE	enum <anonymous>"
+			],
+			[
+				"list_for_each",
+				"list_for_each_entry(pos, head, member)	macro"
+			],
+			[
+				"relay",
+				"relay	void *"
+			],
+			[
+				"relay_get",
+				"relay_get_header	relay_get_header_ptr"
+			],
+			[
+				"conn",
+				"conn_proto	struct conn_proto *"
+			],
+			[
+				"c",
+				"cb	relay_eventcb"
+			],
+			[
+				"la",
+				"last_field	char *"
+			],
+			[
+				"rel",
+				"relay_sys	struct relay_sys *"
+			],
+			[
+				"client",
+				"client_fd	int"
+			],
+			[
+				"client_",
+				"client_handle_fd(int fd)	void"
+			],
+			[
+				"dns_re",
+				"dns_resolve(const char *host, dnscb cb, void *args)	struct dns_req *"
+			],
+			[
+				"tcp",
+				"tcp_relay_sys_init(struct ep_base *base)	int"
+			],
+			[
+				"CONN_",
+				"CONN_READ	enum <anonymous>"
+			],
+			[
+				"si",
+				"sin_family	sa_family_t"
+			],
+			[
+				"socket",
+				"socket(int __family, int __type, int __protocol)	int"
+			],
+			[
+				"send",
+				"send(int, const void *__buff, size_t __len, int __flags)	ssize_t"
+			],
+			[
+				"list_foreach",
+				"list_for_each_entry(pos, head, member)	macro"
+			],
+			[
+				"CONN",
+				"CONN_WRITE	enum <anonymous>"
+			],
+			[
+				"header_set",
+				"header_set_url(struct header *header, const char *url, int len)	void"
+			],
+			[
+				"header_a",
+				"header_append_complete(struct header *header)	void"
+			],
+			[
+				"header_append_",
+				"header_append_field(struct header *header, const char *field, int len)	void"
+			],
+			[
+				"allo",
+				"alloc_len	const int"
+			],
+			[
+				"all",
+				"alloc_len	const int"
+			],
+			[
+				"recv",
+				"recv(int, void *__buff, size_t __len, int __flags)	ssize_t"
+			],
+			[
+				"ep_fil",
+				"ep_file	struct"
+			],
+			[
+				"ep_timer_info",
+				"ep_timer_info_del(struct ep_timer_info *info)	void"
+			],
+			[
+				"ep_timer",
+				"ep_timer_del(struct ep_timer *timer)	int"
+			],
+			[
+				"ti",
+				"timer	struct ep_timer *"
+			],
+			[
+				"t",
+				"timer	struct ep_timer *"
+			],
+			[
+				"dns_real",
+				"dns_real_req	struct"
+			],
+			[
+				"dns_real_req",
+				"dns_real_req_find(const char *host)	struct dns_real_req *"
+			],
+			[
+				"socak",
+				"sockaddr_in	struct"
+			],
+			[
+				"req",
+				"real_req	struct dns_real_req*"
+			],
+			[
+				"ep_",
+				"ep_timer_new(struct ep_base *pool, ep_timercb cb, void *args)	struct ep_timer *"
+			],
+			[
+				"dns_hash",
+				"dns_hash_real_req_add(struct dns_real_req *real_req)	void"
+			],
+			[
+				"list_fore",
+				"list_for_each_entry(pos, head, member)	macro"
+			],
+			[
+				"list_add",
+				"list_add_tail(struct list_head_t *new_node, struct list_head_t *head)	void"
+			],
+			[
+				"uint",
+				"uint64_t	typedef"
+			],
+			[
+				"ns",
+				"ns_addr	const char*"
+			],
+			[
+				"SOCK_",
+				"SOCK_DGRAM	macro"
+			],
+			[
+				"decode",
+				"decode_enc_str(unsigned char *p, char *buf, int len)	unsigned char *"
+			],
+			[
+				"msg",
+				"msg_begin	char*"
+			],
+			[
+				"last",
+				"last_value	char *"
+			],
+			[
+				"he",
+				"headers	char **"
+			],
+			[
+				"list_for",
+				"list_for_each_entry(pos, head, member)	macro"
+			],
+			[
+				"list",
+				"list_head	typedef"
+			],
+			[
+				"tim",
+				"timer_info	struct ep_timer_info *"
+			],
+			[
+				"socks",
+				"setsockopt(int __s, int __level, int __optname, const void *optval, socklen_t __optlen)	int"
+			],
+			[
+				"sockaddr",
+				"sockaddr_in	struct"
+			],
+			[
+				"bind",
+				"bind(int, const struct sockaddr *__my_addr, socklen_t __addrlen)	int"
+			],
+			[
+				"SI",
+				"sin_family	sa_family_t"
+			],
+			[
+				"eptimer",
+				"ep_timer	struct"
+			],
+			[
+				"socket_pa",
+				"socketpair(int __domain, int __type, int __protocol, int *__socket_vec)	int"
+			],
+			[
+				"f",
+				"fd_count	int"
+			],
+			[
+				"EP_",
+				"EP_ERROR	enum <anonymous>"
+			],
+			[
+				"EP_TIMER",
+				"EP_TIMER_FD	enum <anonymous>"
+			],
+			[
+				"ep_ti",
+				"ep_timer_info_add(struct ep_base *base, struct ep_timer_info *info, int millsec)	struct ep_timer_info *"
+			],
+			[
+				"ep_timer_info_",
+				"ep_timer_info_add(struct ep_base *base, struct ep_timer_info *info, int millsec)	struct ep_timer_info *"
+			],
+			[
+				"ep_timr_info",
+				"ep_timer_info_create(void *args, short type)	struct ep_timer_info *"
+			],
+			[
+				"eptimer_a",
+				"ep_timer_append(struct ep_base *base, void *args, short type, int millsec)	ep_timer_info *"
+			],
+			[
+				"pos",
+				"pos_add	list_head_t*"
+			],
+			[
+				"read",
+				"read(int __fd, void *__buf, size_t __nbyte)	_ssize_t"
+			],
+			[
+				"write",
+				"write(int __fd, const void *__buf, size_t __nbyte)	_ssize_t"
+			],
+			[
+				"ep_file_de",
+				"ep_file_detect(struct ep_file *ev, short what, int timeout)	int"
+			],
+			[
+				"ep_poll_di",
+				"ep_poll_dispatch(struct ep_poll *pool, struct ep_fd *fds, int count, int timeout)	int"
+			],
+			[
+				"ep_poll_",
+				"ep_poll_del(struct ep_poll *pool, int fd)	int"
+			],
+			[
+				"EP_PO",
+				"EP_POLL_READ	enum <anonymous>"
+			],
+			[
+				"LIST_",
+				"LIST_HEAD_INIT(name)	macro"
+			],
+			[
+				"ep_poll",
+				"ep_poll_create()	struct ep_poll *"
+			],
+			[
+				"list_",
+				"list_head_t	struct"
+			],
+			[
+				"EPOLL_CTL_",
+				"EPOLL_CTL_DEL	macro"
+			],
+			[
+				"epo",
+				"epoll_event	struct"
+			],
+			[
+				"MAX",
+				"MAX_EVENT_COUNT	macro"
+			],
+			[
+				"EP_POLL",
+				"EP_POLL_WRITE	enum <anonymous>"
+			],
+			[
+				"domai",
+				"domains_"
+			],
+			[
+				"mdns_re",
+				"mdns_req_t"
+			],
+			[
+				"WO",
+				"P2SP_WORKMODE_FILE"
+			],
+			[
+				"P2SP",
+				"P2SP_FETCH_URL"
+			],
+			[
+				"P2SP_FE",
+				"P2SP_FETCH_HEADER"
+			],
+			[
+				"s_ta",
+				"s_fetch_tag_method"
+			],
+			[
+				"tag",
+				"tag_field"
+			],
+			[
+				"filed",
+				"tag_field"
+			],
+			[
+				"up",
+				"upgrade"
+			],
+			[
+				"new",
+				"new_url"
+			],
+			[
+				"pbc_",
+				"pbc_wmessage_string"
+			]
+		]
+	},
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 104.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"insta",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 400.0
+	},
+	"console":
+	{
+		"height": 146.0,
+		"history":
+		[
+			"import urllib.request,os; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); open(os.path.join(ipp, pf), 'wb').write(urllib.request.urlopen( 'http://sublime.wbond.net/' + pf.replace(' ','%20')).read())"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/F/epoll_server/nghttp2/h2_server.c",
+		"/F/epoll_server/client.c",
+		"/F/epoll_server/relay_http.c",
+		"/F/epoll_server/header.c",
+		"/F/epoll_server/conn_tcp.c",
+		"/F/epoll_server/server.c",
+		"/F/epoll_server/val.txt",
+		"/F/epoll_server/ep.c",
+		"/F/epoll_server/dns.h",
+		"/F/epoll_server/dns.c",
+		"/F/epoll_server/relay.h",
+		"/F/epoll_server/ep.h",
+		"/F/epoll_server/ep_poll_epoll.c",
+		"/F/epoll_server/util.c",
+		"/F/epoll_server/util.h",
+		"/F/epoll_server/http_parser.h",
+		"/F/epoll_server/header.h",
+		"/F/epoll_server/conn.h",
+		"/F/epoll_server/client.h",
+		"/F/epoll_server/Makefile",
+		"/D/cygwin64/usr/include/string.h",
+		"/F/epoll_server/buffer.h",
+		"/F/epoll_server/buffer.c",
+		"/F/epoll_server/http_parser.c",
+		"/F/mobile/rd/wspx/tags/libwspx_4.0.3_release_001/jni/third_party/libp2pclient/comm/hash.h",
+		"/F/sliding_average.hpp",
+		"/F/epoll_server/nghttp2/Makefile",
+		"/F/epoll_server/nghttp2/nghttp2_frame.c",
+		"/F/epoll_server/nghttp2/Makefile.msvc",
+		"/F/epoll_server/nghttp2/includes/nghttp2/nghttp2ver.h",
+		"/F/epoll_server/request_parser.h",
+		"/F/epoll_server/ep_poll.h",
+		"/F/epoll_server/sys_network.h",
+		"/F/epoll_server/list.h",
+		"/F/epoll_server/epoll_server",
+		"/F/skynet-master/skynet-src/skynet_main.c",
+		"/F/skynet-master/examples/main.lua",
+		"/F/skynet-master/lualib/skynet.lua",
+		"/F/skynet-master/skynet-src/skynet_start.c",
+		"/F/skynet-master/service-src/service_snlua.c",
+		"/F/skynet-master/skynet-src/skynet_timer.c",
+		"/F/skynet-master/skynet-src/skynet_socket.c",
+		"/F/skynet-master/skynet-src/skynet_server.c",
+		"/F/skynet-master/lualib-src/lua-mongo.c",
+		"/F/skynet-master/skynet-src/malloc_hook.c",
+		"/F/skynet-master/skynet-src/skynet_daemon.c",
+		"/F/skynet-master/3rd/lua/linit.c",
+		"/F/skynet-master/3rd/lua/lualib.h",
+		"/F/skynet-master/skynet.sublime-project",
+		"/F/skynet-master/lualib-src/lua-skynet.c",
+		"/F/skynet-master/lualib-src/lua-socket.c",
+		"/F/skynet-master/skynet-src/skynet_handle.c",
+		"/F/skynet-master/skynet-src/skynet_harbor.c",
+		"/F/skynet-master/service/launcher.lua",
+		"/F/skynet-master/skynet-src/skynet.h",
+		"/F/skynet-master/service-src/service_gate.c",
+		"/F/skynet-master/skynet-src/socket_server.c",
+		"/F/skynet-master/skynet-src/skynet_error.c",
+		"/F/skynet-master/skynet-src/socket_kqueue.h",
+		"/F/skynet-master/skynet-src/socket_epoll.h",
+		"/F/skynet-master/3rd/lua-md5/compat-5.2.c",
+		"/F/skynet-master/platform.mk",
+		"/F/skynet-master/Makefile",
+		"/C/Users/Administrator/Desktop/sig.c",
+		"/F/skynet-master/skynet-src/skynet_monitor.c",
+		"/F/skynet-master/skynet-src/skynet_module.c",
+		"/F/skynet-master/skynet-src/skynet_module.h",
+		"/F/skynet-master/skynet-src/skynet_mq.c",
+		"/F/skynet-master/.tags",
+		"/F/skynet-master/skynet-src/skynet_imp.h",
+		"/F/mobile/rd/wspx/tags/libwspx_3.4.0_release_002/jni/third_party/libevent/test/regress_et.c",
+		"/F/mobile/rd/wspx/tags/libwspx_3.4.0_release_002/ios/README",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/jni/third_party/libevent/test/regress_et.c",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/jni/test/test.cc",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/jni/libmtun/p2sp/p2sp_bitmap.h",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/jni/libmtun/p2sp/p2sp.cc",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/jni/libmtun/p2sp/p2sp_subsys.h",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/jni/libwsld/packer.c",
+		"/C/Users/Administrator/Desktop/nohup.out",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/jni/third_party/libevent/test/regress_ssl.c",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/jni/third_party/libevent/evdns.3",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/jni/third_party/libevent/evbuffer.c",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/jni/third_party/libevent/epoll.c",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/jni/third_party/libevent/test/test-eof",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/jni/libhook/android/include/binder/MemoryDealer.h",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/jni/third_party/libwebp/src/webp/mux_types.h",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/jni/libmtun/Makefile",
+		"/F/mobile/rd/wspx/trunk/libwspx/jni/third_party/libevent/test/test-eof",
+		"/F/mobile/rd/wspx/trunk/refactoring_tool/Transforms.cpp",
+		"/F/mobile/rd/wspx/trunk/libwspx/jni/third_party/libhttp-parser/http_parser.c",
+		"/F/mobile/rd/wspx/trunk/libwspx/jni/libmtun/http_util.cc",
+		"/F/mobile/rd/wspx/trunk/libwspx/jni/third_party/libevent/evdns.3",
+		"/F/mobile/rd/wspx/trunk/libwspx/jni/third_party/libevent/evbuffer.c",
+		"/F/mobile/rd/wspx/trunk/libwspx/jni/third_party/libevent/epoll.c",
+		"/F/mobile/rd/wspx/trunk/libwspx/jni/libhook/android/include/binder/MemoryDealer.h",
+		"/F/mobile/rd/wspx/trunk/bin2c/Makefile",
+		"/F/mobile/rd/wspx/trunk/libwspx/jni/test/test.cc",
+		"/F/mobile/rd/wspx/tags/libwspx_4.1.0_release_002/jni/third_party/libpt/ctcp_utils.h",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/jni/libmtun/util/mdns.cc",
+		"/F/mobile/rd/wspx/trunk/libwspx/ios/libmtun/libmtun/libMtun.m",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/jni/third_party/ustl/ualgorithm",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/jni/third_party/libp2pclient/p2pframework/udp_base.h",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/jni/third_party/libp2pclient/p2pframework/udp_base.c",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/jni/third_party/libp2pclient/udp.cc",
+		"/F/mobile/rd/wspx/trunk/libwspx/jni/libmtun/wspx_settings.h",
+		"/F/mobile/rd/wspx/trunk/libwspx/protobuf/config.proto",
+		"/F/mobile/rd/wspx/trunk/libwspx/jni/libmtun/http_request_parser.cc",
+		"/F/mobile/rd/wspx/trunk/libwspx/jni/libmtun/p2sp/p2sp_subsys_file.cc",
+		"/F/mobile/rd/wspx/trunk/libwspx/jni/libmtun/http_response_parser.cc",
+		"/F/mobile/rd/wspx/trunk/libwspx/jni/libmtun/wspx_settings.c",
+		"/F/mobile/rd/wspx/trunk/libwspx/jni/libmtun/p2sp/p2sp.cc",
+		"/F/mobile/rd/wspx/trunk/libwspx/jni/third_party/libjpeg-turbo/debian/patches/add-copying-for-debian-dir.patch",
+		"/F/mobile/rd/wspx/trunk/libwspx/jni/Android.mk",
+		"/F/mobile/rd/wspx/trunk/libwspx/jni/third_party/libevent/m4/acx_pthread.m4",
+		"/F/mobile/rd/wspx/trunk/libwspx/jni/libmtun/http-relay.h",
+		"/F/mobile/rd/wspx/trunk/libwspx/jni/libmtun/http-relay.c",
+		"/F/mobile/rd/wspx/trunk/libwspx/jni/libmtun/http.h",
+		"/F/mobile/rd/wspx/trunk/libwspx/jni/libmtun/mtunnel.c",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/ios/libmtun/libmtun/libMtun.m",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/jni/third_party/libpt/ctcp_utils.c",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/jni/libhook/android/include/binder/CursorWindow.h",
+		"/F/mobile/rd/wspx/tags/libwspx_4.2.0_release_002/protobuf/config.c"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 90.0,
+		"where_history":
+		[
+			"F:\\epoll_server",
+			"F:\\skynet-master",
+			"F:\\mobile\\rd\\wspx\\tags\\libwspx_4.2.0_release_002",
+			"F:\\mobile\\rd\\wspx\\tags\\libwspx_4.2.0_release_002\\ios",
+			"F:\\mobile\\rd\\wspx\\tags\\libwspx_4.2.0_release_002\\jni",
+			"F:\\mobile\\rd\\wspx\\tags\\libwspx_4.2.0_release_002\\ios\\libmtun",
+			"F:\\mobile\\rd\\wspx\\trunk\\libwspx",
+			"F:\\mobile\\rd\\wspx\\tags\\libwspx_4.2.0_release_002\\ios",
+			"F:\\mobile\\rd\\wspx\\trunk\\libwspx\\jni",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"on_begin_headers_callback",
+			"create_http2_session_data",
+			"app_ctx",
+			"eventcb",
+			"acceptcb",
+			"create_http2_session_data",
+			"next_proto_cb",
+			"nghttp2_session_callbacks",
+			"tcp_relay_sys_init",
+			"server_create_listen_fd",
+			"ep_file_pending",
+			"dns_real_req_del",
+			"tmr_complete",
+			");\n",
+			"client->request_header",
+			"client_url_complete",
+			"client_header_fieldcb",
+			"client_header_valuecb",
+			"client_headers_completecb",
+			"client_bodycb",
+			"client_message_completecb",
+			"eptimer_get_next:",
+			"(*",
+			"_ptr",
+			"resp_reader_",
+			"ep_timer_free",
+			"dns_real_req_start",
+			"recv_cb",
+			"install_domain_name",
+			"workspace",
+			"dns_hash_real_req_add",
+			"LIST_HEAD_INIT",
+			"install_domain_name",
+			"decode_response",
+			"install_domain_name",
+			"604",
+			"list_for_each_entry",
+			"  \n",
+			".c",
+			"_U_",
+			"EPOLLHUP",
+			"mask =",
+			"ep_timer_check",
+			"{\n",
+			");\n",
+			"ep_timer_info_create",
+			"EP_POLL_WRITE",
+			"EP_POLL_READ",
+			"list_head_t",
+			"();\n",
+			"ep_pool",
+			"ep_event",
+			"Downstream wsp connection established",
+			" select bypass, reason=",
+			"----- backends -----",
+			"SOCKET_ACCEPT",
+			"SKYNET_SOCKET_TYPE_ACCEPT",
+			"_cb",
+			"_init",
+			"_timer",
+			"skynet_updatetime",
+			"timer_update",
+			"cmd_timeout",
+			"skynet_timeout",
+			"sp_add",
+			"sp_invalid",
+			"luaopen_socketdriver",
+			"core",
+			"skynet.core",
+			"start",
+			"lua_pcall",
+			"service",
+			"_ctrl",
+			"broker",
+			"dispatch_message",
+			"start_listen",
+			"_cb",
+			"dispatch_socket_message",
+			"_init",
+			"_signal",
+			"_create",
+			"M",
+			"luaopen_socketdriver",
+			"luaopen_skynet_core",
+			"skynet_sendname",
+			"skynet_send",
+			"skynet_context_push",
+			"skynet_mq_push",
+			"cmd_abort",
+			"skynet_handle_retireall",
+			"p2sp_block_size",
+			"block_size\nblock_size",
+			"s_block_length",
+			"s_block_length:",
+			"NDK_DEBUG",
+			"log",
+			"build_absolute_url",
+			"/etc/host",
+			"BLOCK_STATE_HTTP_TRANSFIRING",
+			"processing",
+			"p2sp_get_processing_http_block",
+			"p2sp_update_bitmap_done",
+			"workmode",
+			"LOG_VERBOSE",
+			"_safe_wmessage_string",
+			"onDnsHijackDetectionDone",
+			"onTrafficQuotasTrigger",
+			"onDnsHijackDetectionDone",
+			"sdk_impl_on_dns_hijack_detection_done",
+			"on_traffic_quotas_trigger",
+			"on_dns_hijack_detection_done",
+			"onDnsHijackDetectionDone",
+			"reportDnsHijackDetectionDoneWithResult",
+			"reportTrafficQuotasTriggerWithLength",
+			"reportDnsHijackDetectionDoneWithResult",
+			"onDnsHijackDetectionDone",
+			"reportTrafficQuotasTriggerWithLength",
+			"reportDnsHijackDetectionDoneWithResult",
+			"onDnsHijackDetectionDone",
+			"start_dns_hijack_detection",
+			"s_dns_detection_done_cb",
+			"p2p_reg_share_file_impl",
+			"start_dns_hijack_detection",
+			"p2p_reg_share_file_impl",
+			"dns_hijack_detection",
+			"start",
+			"mdns_start_dns_hijack_detection",
+			"on_dns_hijack"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"relay->response_header",
+			"relay_url_complete",
+			"relay_header_fieldcb",
+			"relay_header_valuecb",
+			"relay_headers_completecb",
+			"relay_bodycb",
+			"relay_message_completecb",
+			"tcp_",
+			"",
+			"client_",
+			"client",
+			"send_buf",
+			"dns_real_req_add",
+			".o",
+			"EP_WRITE",
+			"EP_READ",
+			"list_head",
+			"ep_poll",
+			"ep_file"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"incremental_find":
+	{
+		"height": 26.0
+	},
+	"input":
+	{
+		"height": 34.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.clang":
+	{
+		"height": 118.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.unsaved_changes":
+	{
+		"height": 118.0
+	},
+	"pinned_build_system": "",
+	"replace":
+	{
+		"height": 62.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"v",
+				"val.txt"
+			],
+			[
+				"va",
+				"val.txt"
+			],
+			[
+				"ma",
+				"Makefile"
+			],
+			[
+				"dns.h",
+				"dns.h"
+			],
+			[
+				"nghttp2_fr",
+				"nghttp2\\nghttp2_frame.c"
+			],
+			[
+				"ser",
+				"server.c"
+			],
+			[
+				"skynet_sock",
+				"skynet-src\\skynet_socket.c"
+			],
+			[
+				"skynet.lua",
+				"lualib\\skynet.lua"
+			],
+			[
+				"main.lua",
+				"examples\\main.lua"
+			],
+			[
+				"redsock",
+				"jni\\libmtun\\redsocks.c"
+			],
+			[
+				"redsoc",
+				"libmtun\\redsocks.c"
+			],
+			[
+				"test.cc",
+				"test\\test.cc"
+			],
+			[
+				"p2sp_file",
+				"libmtun\\p2sp\\p2sp_file_cache.cc"
+			],
+			[
+				"response",
+				"libmtun\\http_response_parser.cc"
+			],
+			[
+				"evdns.c",
+				"third_party\\libevent\\evdns.c"
+			],
+			[
+				"mdns.cc",
+				"libmtun\\util\\mdns.cc"
+			],
+			[
+				"mtunne",
+				"libmtun\\mtunnel.c"
+			],
+			[
+				"http_reque",
+				"libwspx\\jni\\libmtun\\http_request_parser.cc"
+			],
+			[
+				"http_par",
+				"libwspx\\jni\\third_party\\libhttp-parser\\http_parser.c"
+			],
+			[
+				"mdns",
+				"jni\\libmtun\\util\\mdns.cc"
+			],
+			[
+				"udp_ba",
+				"jni\\third_party\\libp2pclient\\p2pframework\\udp_base.c"
+			],
+			[
+				"http",
+				"libwspx\\jni\\libmtun\\http_util.cc"
+			],
+			[
+				"cutil",
+				"jni\\libmtun\\util\\cutil.c"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 252.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
