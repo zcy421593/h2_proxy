@@ -92,6 +92,7 @@ typedef struct http2_stream_data {
   bool is_request_completed;
 
   list_head list_resquest_body_buf;
+  list_head list_write_buf;
   bool has_body;
 
 } http2_stream_data;
@@ -135,6 +136,7 @@ create_http2_stream_data(http2_session_data *session_data, int32_t stream_id) {
   stream_data->request_header = header_new(HEADER_REQUEST);
   add_stream(session_data, stream_data);
   INIT_LIST_HEAD(&stream_data->list_resquest_body_buf);
+  INIT_LIST_HEAD(&stream_data->list_write_buf);
   return stream_data;
 }
 
@@ -321,13 +323,16 @@ static ssize_t relay_data_readcb(nghttp2_session *session ,
                                   size_t length, uint32_t *data_flags,
                                   nghttp2_data_source *source,
                                   void *user_data ) {
-  
+  struct ep_write_buf* pos = NULL;
+  struct ep_write_buf* n = NULL;
   http2_stream_data* stream_data = (http2_stream_data*)nghttp2_session_get_stream_user_data(session, stream_id);
   if(!stream_data) {
     return NGHTTP2_ERR_CALLBACK_FAILURE;
   }
+  fprintf(stderr, "relay_data_cb, remote windoe=%d",
+    nghttp2_session_get_stream_remote_window_size(stream_data->session->session, stream_data->stream_id));
   //fprintf(stderr, "relay_data_readcb,body len=%d, is_body_complete=%d\n", stream_data->body_len, stream_data->is_body_complete);
-  if(!stream_data->body_len) {
+  if(list_empty(&stream_data->list_write_buf)) {
 
     if(stream_data->is_body_complete) {
       (*data_flags) |= NGHTTP2_DATA_FLAG_EOF;
@@ -339,22 +344,25 @@ static ssize_t relay_data_readcb(nghttp2_session *session ,
     }    
   }
 
-  int cpy_len = stream_data->body_len < length ? stream_data->body_len : length;
+  int cpy_len = 0;
 
-  memcpy(buf, stream_data->body_buf, cpy_len);
-  if(cpy_len != stream_data->body_len) {
-    memmove(stream_data->body_buf, stream_data->body_buf + cpy_len, stream_data->body_len - cpy_len);
+  list_for_each_entry_safe(pos, n, &stream_data->list_write_buf, list) {
+    int cur_buf_len = pos->len_total - pos->len_sent;
+    if(cur_buf_len <= length - cpy_len) {
+      list_del(&pos->list);
+      memcpy(buf + cpy_len, pos->buf + pos->len_sent, cur_buf_len);
+      ep_write_buf_free(pos);
+      cpy_len += cur_buf_len;
+    } else {
+      memcpy(buf + cpy_len, pos->buf + pos->len_sent, length - cpy_len);
+      cpy_len += (length - cpy_len);
+      pos->len_sent += (length - cpy_len);
+      break;
+    }
   }
 
-  stream_data->body_len -= cpy_len;
-
-  if(stream_data->body_len == 0) {
-    if(!stream_data->is_body_complete) {
-      http_relay_sys.relay_resume_read(stream_data->relay);
-    } else {
+  if(stream_data->is_body_complete && list_empty(&stream_data->list_write_buf)) {
       (*data_flags) |= NGHTTP2_DATA_FLAG_EOF;
-    }
-   
   }
   return cpy_len;
 }
@@ -415,10 +423,16 @@ static void relay_body(http2_stream_data *stream_data) {
   fprintf(stderr, "relay_body\n");
   stream_data->has_body = true;
   http_relay_sys.relay_get_body(stream_data->relay, &body, &len);
+
+  struct ep_write_buf* buf = ep_write_buf_create(body, len);
+  list_add_tail(&buf->list, &stream_data->list_write_buf);
+
+
+  /*
   memcpy(stream_data->body_buf + stream_data->body_len, body, len);
   stream_data->body_len += len;
-
   http_relay_sys.relay_suspend_read(stream_data->relay);
+  */
   nghttp2_session_resume_data(stream_data->session->session, stream_data->stream_id);
   nghttp2_session_send(stream_data->session->session);
 }

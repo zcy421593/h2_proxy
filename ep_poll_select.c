@@ -3,17 +3,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/select.h>
 #include "sys_network.h"
 #define MAX_EVENT_COUNT 128
 
 
 struct ep_poll {
-
+  fd_set set_read;
+  fd_set set_write;
 };
 
 static struct ep_poll* ep_poll_create() {
   struct ep_poll* poll = (struct ep_poll*)calloc(1, sizeof(struct ep_poll));
-  poll->epoll_fd = epoll_create(1024);
+  FD_ZERO(&poll->set_read);
+  FD_ZERO(&poll->set_write);
   return poll;
 }
 static int ep_poll_add(struct ep_poll* pool, int fd, short what) {
