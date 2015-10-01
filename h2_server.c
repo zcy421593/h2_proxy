@@ -594,9 +594,6 @@ static int on_frame_recv_callback(nghttp2_session *session,
     }
     break;
   }
-
-
-
   default:
     break;
   }
@@ -616,7 +613,6 @@ static int on_stream_close_callback(nghttp2_session *session, int32_t stream_id,
   }
 
   remove_stream(session_data, stream_data);
-  //delete_http2_stream_data(stream_data);
   return 0;
 }
 
@@ -650,8 +646,6 @@ static void initialize_nghttp2_session(http2_session_data *session_data) {
 
   nghttp2_session_callbacks_set_on_data_chunk_recv_callback(callbacks, on_data_chunk_recv_callback);
 
-  //nghttp2_session_callbacks_set_data_source_read_length_callback(callbacks, on_data_source_read_length_callback);
-
   nghttp2_session_callbacks_set_on_header_callback(callbacks,
                                                    on_header_callback);
 
@@ -661,8 +655,6 @@ static void initialize_nghttp2_session(http2_session_data *session_data) {
   nghttp2_session_server_new2(&session_data->session, callbacks, session_data, NULL);
 
   nghttp2_session_callbacks_del(callbacks);
-
-
 }
 
 /* Send HTTP/2 client connection header, which includes 24 bytes
@@ -681,8 +673,6 @@ static int send_server_connection_header(http2_session_data *session_data) {
   return 0;
 }
 
-/* readcb for bufferevent after client connection header was
-   checked. */
 static void readcb(http2_session_data *session_data) {
   //http2_session_data *session_data = (http2_session_data *)ptr;
   if (session_recv(session_data) != 0) {
@@ -691,14 +681,6 @@ static void readcb(http2_session_data *session_data) {
   }
 }
 
-/* writecb for bufferevent. To greaceful shutdown after sending or
-   receiving GOAWAY, we check the some conditions on the nghttp2
-   library and output buffer of bufferevent. If it indicates we have
-   no business to this session, tear down the connection. If the
-   connection is not going to shutdown, we call session_send() to
-   process pending data in the output buffer. This is necessary
-   because we have a threshold on the buffer size to avoid too much
-   buffering. See send_callback(). */
 static void writecb(http2_session_data *session_data) {
 
   if (nghttp2_session_want_read(session_data->session) == 0 &&
