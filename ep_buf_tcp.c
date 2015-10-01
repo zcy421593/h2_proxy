@@ -38,6 +38,8 @@ static void ep_buf_file_readcb(struct ep_buf_impl* buf_impl) {
 
   if(buf_impl->detect & EP_BUF_READ) {
     buf_impl->cb(&buf_impl->base_buf, EP_BUF_READ, buf_impl->args);
+  } else {
+    fprintf(stderr, "stderr, not alowed read\n");
   }
   buf_impl->is_in_readcb = false;
   buf_impl->read_buf_len = -1;

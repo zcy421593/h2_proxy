@@ -27,10 +27,11 @@ typedef struct http_relay {
   struct header* response_header;
   struct header* request_header;
   struct ep_timer* tmr_connected;
-  bool is_chunk_post;
 
+  bool is_chunk_post;
   bool connected;
   bool in_body_callback;
+
   relay_eventcb cb;
   void* args;
   char* ptr_body;
@@ -45,6 +46,7 @@ extern struct ep_buf_proto ep_buf_proto_tcp;
 static struct ep_base* s_base = NULL;
 static void relay_conncb(struct ep_buf* conn, short what, void* args);
 static bool relay_has_length_info(struct http_relay* relay);
+
 static list_head s_idle_relay_bucket[IDLE_RELAY_BUCKET_COUNT] = {};
 
 static int relay_count_hash(const char* host) {
@@ -77,7 +79,7 @@ static void relay_sys_reuse_relay(struct http_relay* r) {
   assert(relay->conn); 
 
   relay->relay_status = RELAY_STATUS_CONNECTED;
-
+  relay->args = NULL;
   relay->is_idle = true;
   if(relay->response_header) {
     header_free(relay->response_header);
@@ -182,14 +184,7 @@ static int relay_message_completecb(http_parser *parser)
   struct http_relay* relay = (struct http_relay*)parser->data;
   relay->relay_status = RELAY_STATUS_CONNECTED;
   relay->cb(relay, RELAY_MSG_COMPLETE, relay->args);
-
-  const char* connection = header_value(relay->response_header, "connection");
-
-  if(connection == NULL || strcasecmp(connection, "keep-alive") != 0) {
-    relay->should_free = true;
-  } else {
-    relay_sys_reuse_relay(relay);
-  }
+  relay_sys_reuse_relay(relay);
   return 0;
 }
 
@@ -234,22 +229,24 @@ static void relay_handle_conn_err(struct http_relay* relay) {
   relay->conn_proto->free(relay->conn);
   relay->conn = NULL;
 
-  if(relay->response_header &&
-     relay->response_header->status_code == 200 &&
-     !relay_has_length_info(relay)) {
-    relay->cb(relay, RELAY_MSG_COMPLETE, relay->args);
-  } else if(relay->relay_status < RELAY_STATUS_CONNECTED) {
-    relay->cb(relay, RELAY_ERR_CONN_FAILED, relay->args);
-  } else {
-    relay->cb(relay, RELAY_ERR_CONN_TERMINATE, relay->args);
+  // no idle, notify
+  if(!relay->is_idle) {
+    if(relay->response_header &&
+       relay->response_header->status_code == 200 &&
+       !relay_has_length_info(relay)) {
+      relay->cb(relay, RELAY_MSG_COMPLETE, relay->args);
+    } else if(relay->relay_status < RELAY_STATUS_CONNECTED) {
+      relay->cb(relay, RELAY_ERR_CONN_FAILED, relay->args);
+    } else {
+      relay->cb(relay, RELAY_ERR_CONN_TERMINATE, relay->args);
+    }
   }
+  
   relay_free(relay);
 }
 
 static void relay_conn_tmrcb(struct ep_timer* timer, void* args) {
   struct http_relay* relay = (struct http_relay*)args;
-  fprintf(stderr, "relay_conn_tmrcb\n");
-  
   if(relay->tmr_connected) {
     ep_timer_free(relay->tmr_connected);
     relay->tmr_connected = NULL;
@@ -265,19 +262,18 @@ static void relay_conncb(struct ep_buf* buf_file, short what, void* args) {
     fprintf(stderr, "relay connected\n");
     relay->connected = true;
     relay->cb(relay, RELAY_CONNECTED, relay->args);
+    fprintf(stderr, "enable read\n");
     relay->conn_proto->enable(relay->conn, EP_BUF_READ);
 
   } else if(what == EP_BUF_WRITE) {
-    int out_len = relay->conn_proto->get_output_len(relay->conn);
-    fprintf(stderr, "pending output len=%d\n", out_len);
+
   } else if(what == EP_BUF_READ) {
+    fprintf(stderr, "relay readcb\n");
     char *read_buf = NULL;
     int len = 0;
     relay->conn_proto->read(relay->conn, &read_buf, &len);
-    fprintf(stderr, "relay read:%d\n", len);
 
-    if(len <= 0) {
-      fprintf(stderr, "relay conn recv eof\n");
+    if(len <= 0 || relay->is_idle) {
       relay_handle_conn_err(relay);
       return;
     }
@@ -292,7 +288,6 @@ static void relay_conncb(struct ep_buf* buf_file, short what, void* args) {
     }
   } else if(what & EP_BUF_ERROR) {
     relay_handle_conn_err(relay);
-    fprintf(stderr, "conn error\n");
   }
 }
 
@@ -302,7 +297,6 @@ static void* relay_create(const char* host, int port, relay_eventcb cb, void* ar
     relay = (http_relay*)calloc(1, sizeof(http_relay));
     strncpy(relay->host, host, sizeof(relay->host));
     relay->port = port;
-    fprintf(stderr, "resolving %s\n", host);
     relay->dns_req = dns_resolve(host, relay_dns_resolved, relay);
     relay->relay_status = RELAY_STATUS_CONNECTING;
   }
@@ -314,12 +308,18 @@ static void* relay_create(const char* host, int port, relay_eventcb cb, void* ar
   relay->response_header = header_new(HEADER_RESPONSE);
 
   if(relay->relay_status == RELAY_STATUS_CONNECTED) {
-    fprintf(stderr, "%s:reuse alive relay\n", host);
     relay->conn_proto->enable(relay->conn, EP_BUF_READ);
     relay->tmr_connected = ep_timer_new(s_base, relay_conn_tmrcb, relay);
     ep_timer_add(relay->tmr_connected, 0);
   }  
   return relay;
+}
+
+static void on_responsecb(struct ep_timer* timer, void* args) {
+   struct http_relay* http_relay = (struct http_relay*)args;
+   const char* succ_response = "HTTP/1.1 200 Connection Established\r\n\r\n";
+    http_parser_execute_(&http_relay->parser, &htp_hooks, (char*)succ_response, strlen(succ_response));
+    ep_timer_free(timer);
 }
 
 static void relay_send_request(void* relay, const struct header* header) {
@@ -330,6 +330,13 @@ static void relay_send_request(void* relay, const struct header* header) {
   char buf[20 * 1024] = {};
   int len = sizeof(buf);
   struct field* pos = NULL;
+
+  if(strcasecmp(header->method, "connect") == 0) {
+    http_relay->relay_status = RELAY_STATUS_CONNECTED;
+    struct ep_timer* tmr = ep_timer_new(s_base, on_responsecb, http_relay);
+    ep_timer_add(tmr, 0);
+    return;
+  }
 
   http_relay->request_header = (struct header*)header;
   const char* request_transfer_encoding = header_value((struct header*)header, "Transfer-Encoding");
@@ -365,18 +372,17 @@ static void relay_send_request(void* relay, const struct header* header) {
       append_format(buf, len, "%s: %s\r\n", pos->field, pos->value);
     }
   }
-
   strcat(buf, "\r\n");
-
   fprintf(stderr, "sending request:\n%s", buf);
   http_relay->conn_proto->write(http_relay->conn, buf, strlen(buf));
   http_relay->relay_status = RELAY_STATUS_REQUEST_SENT;
-
 }
+
 static struct header* relay_get_header(void* relay) {
   struct http_relay* http_relay = (struct http_relay*)relay;
   return http_relay->response_header;
 }
+
 static int relay_get_body(void* relay, char** ptr_bldy, int* len_body) {
   struct http_relay* http_relay = (struct http_relay*)relay;
   if(!http_relay->in_body_callback) {
@@ -400,8 +406,7 @@ static int relay_write_body(void* relay, char* data, int len) {
 
   if(http_relay->is_chunk_post) {
     http_relay->conn_proto->write(http_relay->conn, (char*)"\r\n", strlen("\r\n"));
-  }
-  
+  }  
   return len;
 }
 

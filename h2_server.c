@@ -370,6 +370,11 @@ static void relay_header_complete(http2_stream_data *stream_data) {
   relay_make_nv(nvs, ":status", sz_status_code);
   bool is_body = false;
   fprintf(stderr, "status:%s\n", sz_status_code);
+
+  if(strcasecmp(stream_data->request_header->method, "connect") == 0) {
+    is_body = true;
+  }
+  
   list_for_each_entry(pos, &stream_data->response_header->list_headers, list) {
     fprintf(stderr, "%s:%s\n", pos->field, pos->value);
     

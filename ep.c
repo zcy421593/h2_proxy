@@ -317,6 +317,10 @@ int ep_base_dispatch(struct ep_base* pool) {
       int mask = fds[i].event;
 
       struct ep_file* file = pool->files[fd].file;
+
+      if(!file) {
+        continue;
+      }
       file->cb(file, fd, mask, file->args);
     }
 

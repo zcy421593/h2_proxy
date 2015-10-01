@@ -23,8 +23,8 @@ DEPS = nghttp2_pq.o \
 
 INCLUDES = -I./includes/ \
 					 -I./
-
-CFLAGS =  -DDEBUGBUILD -D_U_="" $(INCLUDES) -g
+#-DDEBUGBUILD
+CFLAGS = -D_U_="" $(INCLUDES) -g
 
 libnghttp2.a: $(DEPS)
 	$(AR) rcs $(TARGET) $(DEPS)
