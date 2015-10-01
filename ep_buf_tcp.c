@@ -10,6 +10,7 @@
 #include "util.h"
 #include <errno.h>
 #include <assert.h>
+
 struct ep_buf_impl {
   struct ep_buf base_buf;
   struct ep_base* base;
@@ -21,7 +22,6 @@ struct ep_buf_impl {
   int read_buf_len;
 
   bool is_cbclose_pending;
-  bool is_in_eventcb;
   bool is_in_readcb;
 
   list_head list_write_buf;
@@ -94,11 +94,9 @@ static void ep_buf_file_writecb(struct ep_buf_impl* buf_impl) {
 static void ep_buf_file_eventcb(struct ep_file* file, int fd, short what, void* args) {
   fprintf(stderr, "ep_buf_file_eventcb:%d\n", what);
   struct ep_buf_impl* buf_impl = (struct ep_buf_impl*)args;
- // buf_impl->is_in_eventcb = true;
   if(what & EP_ERROR) {
     ep_file_detect(buf_impl->file, 0, -1);
     buf_impl->cb(&buf_impl->base_buf, EP_BUF_ERROR, buf_impl->args);
-    buf_impl->is_in_eventcb = false;
     return;
   }
 
@@ -111,12 +109,6 @@ static void ep_buf_file_eventcb(struct ep_file* file, int fd, short what, void* 
     fprintf(stderr, "ep_buf_file_eventcb:read\n");
     ep_buf_file_readcb(buf_impl);
   }
-
-  //buf_impl->is_in_eventcb = false;
-
-  //if(!buf_impl->is_cbclose_pending) {
-  //  ep_buf_free(&buf_impl->base_buf);
- // }
 }
 
 static struct ep_buf* ep_buf_create(struct ep_base* base, int fd, ep_bufcb cb, void* args) {

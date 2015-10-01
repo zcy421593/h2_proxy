@@ -468,7 +468,9 @@ static void relaycb(void* relay, short what, void* args) {
     };
     nghttp2_submit_response(stream_data->session->session, stream_data->stream_id, nvs, 2, NULL);
     nghttp2_session_send(stream_data->session->session);
-
+  } else if(what == RELAY_ERR_CONN_TERMINATE) {
+    nghttp2_submit_rst_stream(stream_data->session->session, 0, stream_data->stream_id, 0);
+    nghttp2_session_send(stream_data->session->session);
   }
 }
 
@@ -573,7 +575,7 @@ static int on_frame_recv_callback(nghttp2_session *session,
     break;
   }
 
-    case NGHTTP2_WINDOW_UPDATE: {
+  case NGHTTP2_WINDOW_UPDATE: {
     fprintf(stderr, "recv window update package,len=%d\n", frame->window_update.window_size_increment);
     stream_data =
           (http2_stream_data *)nghttp2_session_get_stream_user_data(session, frame->hd.stream_id);
@@ -581,9 +583,19 @@ static int on_frame_recv_callback(nghttp2_session *session,
         return 0;
       }
     http_relay_sys.relay_resume_read(stream_data->relay);
-    //nghttp2_session_get_stream_remote_window_size(nghttp2_session *session, int32_t stream_id)
-    //frame->window_update.
+    break;
   }
+  case NGHTTP2_RST_STREAM: {
+    stream_data =
+          (http2_stream_data *)nghttp2_session_get_stream_user_data(session, frame->hd.stream_id);
+    if(stream_data && stream_data->relay) {
+      http_relay_sys.relay_close(stream_data->relay);
+      stream_data->relay = NULL;
+    }
+    break;
+  }
+
+
 
   default:
     break;
@@ -602,6 +614,7 @@ static int on_stream_close_callback(nghttp2_session *session, int32_t stream_id,
   if (!stream_data) {
     return 0;
   }
+
   remove_stream(session_data, stream_data);
   //delete_http2_stream_data(stream_data);
   return 0;

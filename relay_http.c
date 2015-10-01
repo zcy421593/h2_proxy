@@ -48,9 +48,9 @@ static bool relay_has_length_info(struct http_relay* relay);
 static list_head s_idle_relay_bucket[IDLE_RELAY_BUCKET_COUNT] = {};
 
 static int relay_count_hash(const char* host) {
-  int res = 0;
+  uint32_t res = 0;
   int i = 0;
-  for(i = 0; i< strlen(host); i++) {
+  for(i = 0; i < strlen(host); i++) {
     res = res +  host[i];
   }
   return res % IDLE_RELAY_BUCKET_COUNT;
