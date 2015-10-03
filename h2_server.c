@@ -374,7 +374,7 @@ static void relay_header_complete(http2_stream_data *stream_data) {
   if(strcasecmp(stream_data->request_header->method, "connect") == 0) {
     is_body = true;
   }
-  
+
   list_for_each_entry(pos, &stream_data->response_header->list_headers, list) {
     fprintf(stderr, "%s:%s\n", pos->field, pos->value);
     
@@ -486,6 +486,10 @@ static int on_data_chunk_recv_callback(nghttp2_session *session,
   fprintf(stderr, "relay_on_data_chunk_recv_callback, stream id=%d\n", stream_id);
   http2_stream_data* stream_data =
           (http2_stream_data *)nghttp2_session_get_stream_user_data(session, stream_id);
+
+  if(!stream_data->relay) {
+    return 0;
+  }
   int status = http_relay_sys.relay_get_status(stream_data->relay);
 
   if(len <= 0) {
@@ -539,6 +543,9 @@ static int on_request_recv(nghttp2_session *session,
 }
 
 static void on_request_complete(http2_stream_data *stream_data) {
+  if(!stream_data->relay) {
+    return;
+  }
   int status = http_relay_sys.relay_get_status(stream_data->relay);
   if(status >= RELAY_STATUS_CONNECTED) {
     http_relay_sys.relay_complete_request(stream_data->relay);
