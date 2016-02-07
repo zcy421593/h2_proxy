@@ -126,7 +126,7 @@ static void dns_cache_add(const char* host, const char* ip, const char* cname) {
 static void dns_real_req_timercb(struct ep_timer* timer, void* args) {
     struct dns_real_req* real_req = (struct dns_real_req*)args;
     real_req->count_timeout ++;
-    if(real_req->count_timeout >= 3) {
+    if(real_req->count_timeout >= 5) {
         dns_real_req_active_and_free(real_req, NULL, 0, -1);
     } else {
         dns_real_req_start(real_req);
@@ -167,7 +167,7 @@ static void dns_real_req_start(struct dns_real_req* real_req) {
     }
     
     if(!ep_timer_pending(real_req->timer)) {
-        ep_timer_add(real_req->timer, 500 * (real_req->count_timeout + 1));
+        ep_timer_add(real_req->timer, 200 * (real_req->count_timeout + 1));
         dns_send_req(real_req->host);
     }
 }
@@ -202,6 +202,10 @@ static void dns_real_req_active_and_free(struct dns_real_req* req,
     
     if(!cname) {
         cname = "";
+    }
+
+    if(resp_count == 0 & ret_code == 0) {
+        ret_code = -1;
     }
 
     list_for_each_entry_safe(pos, n, &req->list_reqs, list) {

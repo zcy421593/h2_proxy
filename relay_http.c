@@ -122,12 +122,20 @@ static void relay_free(struct http_relay* relay) {
   }
 
   if(relay->tmr_connected) {
+    if(ep_timer_pending(relay->tmr_connected)) {
+      ep_timer_del(relay->tmr_connected);
+    }
     ep_timer_free(relay->tmr_connected);
   }
 
   free(relay);
 }
 
+static int relay_message_begincb(http_parser *parser) {
+  struct http_relay* relay = (struct http_relay*)parser->data;
+  relay->response_header = header_new(HEADER_RESPONSE);
+   return 0;
+}
 
 static int relay_status_completecb(http_parser *parser) {
   struct http_relay* relay = (struct http_relay*)parser->data;
@@ -189,7 +197,7 @@ static int relay_message_completecb(http_parser *parser)
 }
 
 static http_parser_settings htp_hooks = {
-  NULL,                     //http_cb      on_message_begin
+  relay_message_begincb,                     //http_cb      on_message_begin
   relay_url_complete,       //http_data_cb on_url;
   relay_status_completecb,  //http_cb on_status_complete 
   relay_header_fieldcb,     //http_data_cb on_header_field;
@@ -220,9 +228,11 @@ static void relay_dns_resolved(int code, const char** ips, int num, const char* 
 
 static bool relay_has_length_info(struct http_relay* relay) {
   const char* content_length = header_value(relay->response_header, "content-length");
-  const char* chunked = header_value(relay->response_header, "Transfer-Encoding");
-
-  return ((content_length != NULL) || (chunked != NULL));
+  if(content_length) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 static void relay_handle_conn_err(struct http_relay* relay) {
@@ -231,9 +241,7 @@ static void relay_handle_conn_err(struct http_relay* relay) {
 
   // no idle, notify
   if(!relay->is_idle) {
-    if(relay->response_header &&
-       relay->response_header->status_code == 200 &&
-       !relay_has_length_info(relay)) {
+    if(relay->response_header && !relay_has_length_info(relay)) {
       relay->cb(relay, RELAY_MSG_COMPLETE, relay->args);
     } else if(relay->relay_status < RELAY_STATUS_CONNECTED) {
       relay->cb(relay, RELAY_ERR_CONN_FAILED, relay->args);
@@ -280,7 +288,7 @@ static void relay_conncb(struct ep_buf* buf_file, short what, void* args) {
 
     int nparsed = http_parser_execute_(&relay->parser, &htp_hooks, read_buf, len);
 
-    if(relay->parser.http_errno != HPE_OK) {
+    if(relay->parser.http_errno != HPE_OK && !relay->is_idle) {
       relay->cb(relay, RELAY_ERR_RESPONSE_PARSE_FAILED, relay->args);
       relay_free(relay);
     } else if(relay->should_free) {
@@ -305,7 +313,6 @@ static void* relay_create(const char* host, int port, relay_eventcb cb, void* ar
   relay->args = args;
   http_parser_init_(&relay->parser, HTTP_RESPONSE);
   relay->parser.data = relay;
-  relay->response_header = header_new(HEADER_RESPONSE);
 
   if(relay->relay_status == RELAY_STATUS_CONNECTED) {
     relay->conn_proto->enable(relay->conn, EP_BUF_READ);

@@ -466,12 +466,12 @@ static void relaycb(void* relay, short what, void* args) {
     }
     stream_data->relay = NULL;
   } else if(what == RELAY_ERR_DNS_FAILED || RELAY_ERR_CONN_FAILED) {
-    //nghttp2_submit_rst_stream(stream_data->session->session, 0, stream_data->stream_id, 0);
     nghttp2_nv nvs[5] = {
       MAKE_NV(":status", "503"),
       MAKE_NV("x-error-reason", "connect source failed"),
+      MAKE_NV("content-length", "0"),
     };
-    nghttp2_submit_response(stream_data->session->session, stream_data->stream_id, nvs, 2, NULL);
+    nghttp2_submit_response(stream_data->session->session, stream_data->stream_id, nvs, 3, NULL);
     nghttp2_session_send(stream_data->session->session);
   } else if(what == RELAY_ERR_CONN_TERMINATE) {
     nghttp2_submit_rst_stream(stream_data->session->session, 0, stream_data->stream_id, 0);
@@ -524,7 +524,12 @@ static int on_request_recv(nghttp2_session *session,
   char host[1024] = {};
   strncpy(host, stream_data->authority, sizeof(host));
   char* pos = strchr(host, ':');
-  *pos = 0;
+  int port = 80;
+  if(pos) {
+    *pos = 0;
+    port = atoi(pos + 1);
+  }
+  
   append_format(url, sizeof(url), "%s://%s%s", stream_data->scheme, stream_data->authority, stream_data->path);
   header_set_url(stream_data->request_header, url, strlen(url));
 
@@ -537,7 +542,7 @@ static int on_request_recv(nghttp2_session *session,
   }
 
   fprintf(stderr, "on_request_recv:%s\n", url);
-  stream_data->relay = http_relay_sys.relay_create(host, atoi(pos + 1), relaycb, stream_data);
+  stream_data->relay = http_relay_sys.relay_create(host, port, relaycb, stream_data);
 
   return 0;
 }
@@ -591,7 +596,7 @@ static int on_frame_recv_callback(nghttp2_session *session,
     fprintf(stderr, "recv window update package,len=%d\n", frame->window_update.window_size_increment);
     stream_data =
           (http2_stream_data *)nghttp2_session_get_stream_user_data(session, frame->hd.stream_id);
-    if (!stream_data) {
+    if (!stream_data || !stream_data->relay) {
         return 0;
       }
     http_relay_sys.relay_resume_read(stream_data->relay);
@@ -686,7 +691,6 @@ static int send_server_connection_header(http2_session_data *session_data) {
 }
 
 static void readcb(http2_session_data *session_data) {
-  //http2_session_data *session_data = (http2_session_data *)ptr;
   if (session_recv(session_data) != 0) {
     delete_http2_session_data(session_data);
     return;

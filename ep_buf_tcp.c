@@ -21,32 +21,40 @@ struct ep_buf_impl {
   char* buf_read;
   int read_buf_len;
 
-  bool is_cbclose_pending;
-  bool is_in_readcb;
+  bool is_incb;
+  bool is_free_pending;
 
   list_head list_write_buf;
   int detect;
 };
 static void ep_buf_free(struct ep_buf* buf);
 
-static void ep_buf_file_readcb(struct ep_buf_impl* buf_impl) {
+static int ep_buf_file_readcb(struct ep_buf_impl* buf_impl) {
   char buf[4096] = {};
   int len_read = read(buf_impl->fd, buf, sizeof(buf));
   buf_impl->buf_read = (char*)buf;
   buf_impl->read_buf_len = len_read;
-  buf_impl->is_in_readcb = true;
+  buf_impl->is_incb = true;
 
   if(buf_impl->detect & EP_BUF_READ) {
+    buf_impl->is_incb = true;
     buf_impl->cb(&buf_impl->base_buf, EP_BUF_READ, buf_impl->args);
+    buf_impl->is_incb = false;
   } else {
     fprintf(stderr, "stderr, not alowed read\n");
   }
-  buf_impl->is_in_readcb = false;
+
+  if(buf_impl->is_free_pending) {
+    buf_impl->is_free_pending = false;
+    ep_buf_free((struct ep_buf*)buf_impl);
+    return -1;
+  }
   buf_impl->read_buf_len = -1;
   buf_impl->buf_read = NULL;
+  return 0;
 }
 
-static void ep_buf_file_writecb(struct ep_buf_impl* buf_impl) {
+static int ep_buf_file_writecb(struct ep_buf_impl* buf_impl) {
   int detect = ep_file_get_detect(buf_impl->file);
   int timeout = ep_file_get_timeout(buf_impl->file);
   struct ep_write_buf* pos = NULL;
@@ -61,7 +69,7 @@ static void ep_buf_file_writecb(struct ep_buf_impl* buf_impl) {
       int len_write = write(buf_impl->fd, pos->buf + pos->len_sent, pos->len_total - pos->len_sent);
       fprintf(stderr, "sending write buffer,res=%d\n", len_write);
       if(len_write < 0) {
-        if(errno != EINPROGRESS) {
+        if(errno != EINPROGRESS && errno != EAGAIN) {
           is_error = true;
         }
         break;
@@ -79,37 +87,68 @@ static void ep_buf_file_writecb(struct ep_buf_impl* buf_impl) {
 
   if(list_empty(&buf_impl->list_write_buf)) {
     detect &= (~EP_WRITE);
+    buf_impl->is_incb = true;
     ep_file_detect(buf_impl->file, detect, timeout);
+    buf_impl->is_incb = false;
+
+    if(buf_impl->is_free_pending) {
+      buf_impl->is_free_pending = false;
+      ep_buf_free((struct ep_buf*)buf_impl);
+      return -1;
+    }
   }
 
   if(is_error) {
     ep_file_detect(buf_impl->file, 0, -1);
+    buf_impl->is_incb = true;
     buf_impl->cb(&buf_impl->base_buf, EP_BUF_ERROR, buf_impl->args);
+    buf_impl->is_incb = false;
+
+    if(buf_impl->is_free_pending) {
+      buf_impl->is_free_pending = false;
+      ep_buf_free((struct ep_buf*)buf_impl);
+      return -1;
+    }
   }
 
   if(buf_impl->detect & EP_BUF_WRITE) {
+    buf_impl->is_incb = true;
     buf_impl->cb(&buf_impl->base_buf, EP_BUF_WRITE, buf_impl->args);
+    buf_impl->is_incb = false;
+
+    if(buf_impl->is_free_pending) {
+      buf_impl->is_free_pending = false;
+      ep_buf_free((struct ep_buf*)buf_impl);
+      return -1;
+    }
   }
+  return 0;
 
 }
 
 static void ep_buf_file_eventcb(struct ep_file* file, int fd, short what, void* args) {
   fprintf(stderr, "ep_buf_file_eventcb:%d\n", what);
   struct ep_buf_impl* buf_impl = (struct ep_buf_impl*)args;
-  if(what & EP_ERROR) {
-    ep_file_detect(buf_impl->file, 0, -1);
-    buf_impl->cb(&buf_impl->base_buf, EP_BUF_ERROR, buf_impl->args);
-    return;
-  }
+
 
   if((what & EP_WRITE)) {
     fprintf(stderr, "ep_buf_file_eventcb:write\n");
-    ep_buf_file_writecb(buf_impl);
+    if(ep_buf_file_writecb(buf_impl) !=0) {
+      return;
+    }
   }
 
   if((what & EP_READ)) {
     fprintf(stderr, "ep_buf_file_eventcb:read\n");
-    ep_buf_file_readcb(buf_impl);
+    if(ep_buf_file_readcb(buf_impl) != 0) {
+      return;
+    }
+  }
+
+    if(what & EP_ERROR) {
+    ep_file_detect(buf_impl->file, 0, -1);
+    buf_impl->cb(&buf_impl->base_buf, EP_BUF_ERROR, buf_impl->args);
+    return;
   }
 }
 
@@ -133,7 +172,7 @@ static struct ep_buf* ep_buf_create(struct ep_base* base, int fd, ep_bufcb cb, v
 }
 
 static int ep_buf_connect(struct ep_buf* buf, const char* ip, int port) {
-  fprintf(stderr, "connect %s\n", ip);
+  fprintf(stderr, "connect %s:%d\n", ip, port);
   struct ep_buf_impl* buf_impl = (struct ep_buf_impl*)buf;
   struct sockaddr_in addr = {};
   addr.sin_addr.s_addr = inet_addr(ip);
@@ -150,7 +189,7 @@ static int ep_buf_connect(struct ep_buf* buf, const char* ip, int port) {
 static void ep_buf_read(struct ep_buf* buf_file, char** pbuf, int* len) {
   struct ep_buf_impl* buf_impl = (struct ep_buf_impl*)buf_file;
   assert(buf_impl);
-  assert(buf_impl->is_in_readcb);
+  assert(buf_impl->is_incb);
   *pbuf = buf_impl->buf_read;
   *len = buf_impl->read_buf_len;
 }
@@ -228,6 +267,12 @@ static void ep_buf_free(struct ep_buf* buf) {
   struct ep_buf_impl* buf_impl = (struct ep_buf_impl*)buf;
   struct ep_write_buf* pos = NULL;
   struct ep_write_buf* n = NULL;
+
+  if(buf_impl->is_incb) {
+    buf_impl->is_free_pending = true;
+    return;
+  }
+
 
   list_for_each_entry_safe(pos, n, &buf_impl->list_write_buf, list) {
     list_del(&pos->list);
